@@ -1,9 +1,15 @@
-import React from 'react'
+import { configureStore } from '@reduxjs/toolkit';
+import loginInfoSlice from "../features/loginInfoSlice";
+import registerSlice from "../features/registerSlice"
 
-const store = () => {
-  return (
-    <div>store</div>
-  )
-}
+
+const store = configureStore({
+  reducer: {
+    loginInfos:loginInfoSlice,
+    registerInfos:registerSlice,
+    
+  },
+});
+
 
 export default store

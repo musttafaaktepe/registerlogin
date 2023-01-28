@@ -1,9 +1,27 @@
-import React from 'react'
+import { createSlice } from "@reduxjs/toolkit";
 
-const registerSlice = () => {
-  return (
-    <div>registerSlice</div>
-  )
-}
+const initialStates = {    
+    name:"",
+    email:"",
+    password:"",
+    
+};
 
-export default registerSlice
+const registerSlice = createSlice({
+    name:"registerInfo",
+    initialState:initialStates,
+    reducers:{
+        registerInfos:(state,action)=>{
+            state.name=action.payload.name;
+            state.email=action.payload.email;
+            state.password=action.payload.password;            
+        },
+        afterRegister:(state) => {
+           delete state.password;
+        }
+        
+    }
+})
+
+export const {registerInfos, afterRegister} = registerSlice.actions;
+export default registerSlice.reducer
