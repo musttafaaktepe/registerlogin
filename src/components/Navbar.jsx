@@ -10,17 +10,25 @@ import { useSelector } from "react-redux";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import { useDispatch } from "react-redux";
 import { loginInfos, logout } from "../redux/features/loginInfoSlice";
+import { getAuth, signOut } from "firebase/auth";
 
 
 const Navbar = () => {
-  const loginInformation = true
-  // const { loginInformation } = useSelector((state) => state.loginInfos);
+  // const loginInformation = true
+  const { loginInformation } = useSelector((state) => state.loginInfos);
   const navigate = useNavigate();
+
   const dispatch = useDispatch()
 
-  const logoutfunc =() => {
-     navigate("/login");     
-     return dispatch(  logout()) 
+  const logoutfunc = async () => {
+    try {
+      const auth = getAuth()
+      await signOut(auth);
+      dispatch(logout());
+      alert("logout");
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
 

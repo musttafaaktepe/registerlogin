@@ -1,12 +1,12 @@
-import React from 'react'
-import { Navigate, Outlet } from 'react-router'
-const PrivateRouter = () => {
-    const loginInformation = true
-  return (
-    <>
-    {loginInformation ? <Outlet/> : <Navigate to="/"/> }
-    </>
-  )
-}
+import React from "react";
+import { Navigate, Outlet } from "react-router";
+import { useSelector } from "react-redux";
 
-export default PrivateRouter
+const PrivateRouter = () => {
+  const loginInformation = useSelector((state) => state.loginInfos);
+  console.log(loginInformation)
+  return <>{loginInformation.loginInformation ? <Outlet /> : <Navigate to="/" />}</>;
+  
+};
+
+export default PrivateRouter;

@@ -1,17 +1,80 @@
 import React from 'react'
 import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import app, { auth } from "../../auth/firebase";
 import { loginInfos } from "../../redux/features/loginInfoSlice";
+import { loginSuccess } from "../../redux/features/loginInfoSlice";
+import { GoogleAuthProvider } from "firebase/auth";
+import { getDatabase, onValue } from "firebase/database";
+import { ref, set } from "firebase/database";
 
 
 const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+
   const loginInforms = useSelector((state) => state.loginInfos);
 
+  const { loginInformation, email, password, userInfo } = loginInforms;
 
+  const handleLogin = async () => {
+    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email.match(reg)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+      alert("ınvalidEmail");
+    }
+    if (password.toString().length < 6) {
+      setPasswordError(true);
+      alert("min 6 ch");
+    } else {
+      setPasswordError(false);
+    }
 
+    if (!emailError && !passwordError) {
+      try {
+        const { user } = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const {
+          email: emailAddress,
+          displayName,
+          uid,
+          metadata: { creationTime, lastSignInTime },
+        } = user;
+        dispatch(
+          loginSuccess({
+            ...loginInforms,
+            userInfo: {
+              displayName,
+              uid,
+              metadata: { creationTime, lastSignInTime },
+            },
+            email: emailAddress,
+          })
+        );
+
+        
+
+        navigate("/");
+        alert("Successfull login");
+        console.log(loginInforms);
+        console.log(user);
+      } catch (error) {
+        console.log(error.message);
+        alert("Login failed!");
+      }
+    }
+  };
 
 
 
@@ -107,7 +170,7 @@ const Login = () => {
                     type="button"
                     className="btn btn-primary btn-lg"
                     style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }}
-                    // onClick={handleLogin}
+                    onClick={handleLogin}
                   >
                     Login
                   </button>
